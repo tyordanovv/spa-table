@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { TableRow } from "../types/table.types";
+import { useAppDispatch, useAppSelector } from "../store/hooks";
+import { createRow, fetchRows } from "../store/slices/tableSlice";
 
 const styles = {
   table: {
@@ -24,7 +26,15 @@ const styles = {
 };
 
 export const DataTable: React.FC = () => {
-  const rows: TableRow[] = []; // todo fetch from store
+  const dispatch = useAppDispatch();
+  const { rows, loading, error } = useAppSelector((state) => state.table);
+
+  useEffect(() => {
+    dispatch(fetchRows());
+  }, [dispatch]);
+  
+  if (loading) return <p>Loading data...</p>;
+  if (error) return <p style={{ color: 'red' }}>{error}</p>;
 
   return (
     <table style={styles.table}>

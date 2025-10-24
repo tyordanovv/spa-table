@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { useAppDispatch } from "../store/hooks";
+import { createRow } from "../store/slices/tableSlice";
 
 const styles = {
   inputSection: {
@@ -43,14 +45,22 @@ export const InputSection: React.FC = () => {
   const [numberValue, setNumberValue] = useState("");
   const [selectorValue, setSelectorValue] = useState("");
   const [textValue, setTextValue] = useState("");
+  const dispatch = useAppDispatch();
 
-  const handleAddRow = () => {
-    if (numberValue && selectorValue && textValue) {
-      // TODO dispatch add row
-      setNumberValue("");
-      setSelectorValue("");
-      setTextValue("");
-    }
+  const handleAddRow = async () => {
+    if (!numberValue || !selectorValue || !textValue) return;
+
+    await dispatch(
+      createRow({
+        number: numberValue,
+        selector: selectorValue,
+        text: textValue,
+      })
+    );
+
+    setNumberValue("");
+    setSelectorValue("");
+    setTextValue("");
   };
 
   return (

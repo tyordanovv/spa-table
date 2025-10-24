@@ -1,4 +1,6 @@
 import React from "react";
+import { useAppDispatch } from "../store/hooks";
+import { logout } from "../store/slices/authSlice";
 
 const styles = {
   header: {
@@ -19,8 +21,10 @@ const styles = {
 };
 
 export const Header: React.FC = () => {
+  const dispatch = useAppDispatch();
+
   const handleLogout = () => {
-    // todo
+    dispatch(logout());
   };
 
   return (

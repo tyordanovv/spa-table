@@ -7,4 +7,6 @@ export interface TableRow {
 
 export interface TableState {
   rows: TableRow[];
+  loading?: boolean;
+  error?: string | null;
 }
