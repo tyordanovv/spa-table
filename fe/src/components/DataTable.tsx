@@ -24,7 +24,7 @@ const styles = {
 };
 
 export const DataTable: React.FC = () => {
-  const rows: TableRow[] = []; // todo detch from store
+  const rows: TableRow[] = []; // todo fetch from store
 
   return (
     <table style={styles.table}>
