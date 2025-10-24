@@ -1,26 +1,18 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Header } from './components/Header';
+import { InputSection } from './components/InputSelection';
+import { DataTable } from './components/DataTable';
 
-function App() {
+const App: React.FC = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={{ minHeight: '100vh', backgroundColor: '#f5f5f5' }}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '20px' }}>
+        <Header />
+        <InputSection />
+        <DataTable />
+      </div>
     </div>
   );
-}
+};
 
 export default App;
