@@ -9,4 +9,6 @@ export interface TableState {
   rows: TableRow[];
   loading?: boolean;
   error?: string | null;
+  offset: number,
+  hasMore: boolean,
 }

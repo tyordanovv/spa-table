@@ -6,14 +6,16 @@ const initialState: TableState = {
   rows: [],
   loading: false,
   error: null,
+  offset: 0,
+  hasMore: true,
 };
 
 export const fetchRows = createAsyncThunk(
   'table/fetchRows',
-  async (_, { rejectWithValue }) => {
+  async ({ offset = 0, limit = 10 }: { offset?: number; limit?: number }, { rejectWithValue }) => {
     try {
-      const rows = await tableService.fetchRows();
-      return rows;
+      const { items, hasMore } = await tableService.fetchRows(offset, limit);
+      return { rows: items, offset, hasMore };
     } catch (err: any) {
       return rejectWithValue(err.response?.data?.message || 'Failed to fetch rows');
     }
@@ -36,9 +38,13 @@ const tableSlice = createSlice({
   name: 'table',
   initialState,
   reducers: {
-    // purely local update (optional optimistic)
     addRow: (state, action: PayloadAction<Omit<TableRow, 'id'>>) => {
       state.rows.push({ ...action.payload, id: Date.now() });
+    },
+    resetTable: (state) => {
+      state.rows = [];
+      state.offset = 0;
+      state.hasMore = true;
     },
   },
   extraReducers: (builder) => {
@@ -48,8 +54,15 @@ const tableSlice = createSlice({
         state.error = null;
       })
       .addCase(fetchRows.fulfilled, (state, action) => {
+        const { rows, offset, hasMore } = action.payload;
         state.loading = false;
-        state.rows = action.payload;
+        if (offset === 0) {
+          state.rows = rows;
+        } else {
+          state.rows.push(...rows);
+        }
+        state.offset = offset + rows.length;
+        state.hasMore = hasMore;
       })
       .addCase(fetchRows.rejected, (state, action) => {
         state.loading = false;
@@ -57,10 +70,11 @@ const tableSlice = createSlice({
       })
       .addCase(createRow.pending, (state) => {
         state.loading = true;
+        state.error = null;
       })
       .addCase(createRow.fulfilled, (state, action) => {
         state.loading = false;
-        state.rows.push(action.payload);
+        state.rows.unshift(action.payload);
       })
       .addCase(createRow.rejected, (state, action) => {
         state.loading = false;
@@ -69,5 +83,5 @@ const tableSlice = createSlice({
   },
 });
 
-export const { addRow } = tableSlice.actions;
+export const { addRow, resetTable } = tableSlice.actions;
 export const tableReducer = tableSlice.reducer;

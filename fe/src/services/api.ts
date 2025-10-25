@@ -5,11 +5,12 @@ import axios, {
 } from "axios";
 import { tokenService } from "./tokenService";
 
-const API_BASE_URL = "https://api.example.com";
+const API_BASE_URL = "http://localhost:8080";
 
 export const api: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
   headers: { "Content-Type": "application/json" },
+  withCredentials: true,
 });
 
 api.interceptors.request.use(
