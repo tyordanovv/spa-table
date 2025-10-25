@@ -1,4 +1,8 @@
 package com.tyordanovv.dto;
 
-public class PagedResult {
-}
+import java.util.List;
+
+public record PagedResult<T>(
+        List<T> items,
+        boolean hasMore
+) {}

@@ -1,4 +1,8 @@
 package com.tyordanovv.dto;
 
-public class RowDto {
-}
+public record RowDto(
+        Long id,
+        Long number,
+        String selector,
+        String text
+) {}

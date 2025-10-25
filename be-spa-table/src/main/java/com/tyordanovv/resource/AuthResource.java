@@ -3,39 +3,35 @@ package com.tyordanovv.resource;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import org.eclipse.microprofile.jwt.JsonWebToken;
 import io.smallrye.jwt.build.Jwt;
-import java.util.HashMap;
-import java.util.Map;
 
 import java.util.Map;
 
-@Path("/auth")
+import static com.tyordanovv.util.Constants.*;
+import static javax.management.timer.Timer.ONE_DAY;
+
+@Path("/api/auth")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class AuthResource {
-
-    private static final String USERNAME = "user";
-    private static final String PASSWORD = "password";
-
     @POST
     @Path("/login")
     public Response login(Credentials credentials) {
         if (USERNAME.equals(credentials.username) && PASSWORD.equals(credentials.password)) {
-            // Build JWT
-            String token = JWT.issuer("http://localhost:8080")
-                    .upn(USERNAME)
-                    .groups("user")
-                    .sign();
+            try {
+                String token = Jwt.issuer("http://localhost:8080")
+                        .upn(USERNAME)
+                        .subject(USERNAME)
+                        .groups(USER_GROUP)
+                        .expiresIn(ONE_DAY)
+                        .sign();
 
-            Map<String, Object> resp = new HashMap<>();
-            resp.put("token", token);
-            Map<String, String> user = new HashMap<>();
-            user.put("id", "1");
-            user.put("username", USERNAME);
-            resp.put("user", user);
-
-            return Response.ok(resp).build();
+                return Response.ok(Map.of("token", token)).build();
+            } catch (Exception e) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                        .entity(Map.of("error", "Token generation failed: " + e.getMessage()))
+                        .build();
+            }
         }
         return Response.status(Response.Status.UNAUTHORIZED)
                 .entity(Map.of("error", "Invalid username or password"))
